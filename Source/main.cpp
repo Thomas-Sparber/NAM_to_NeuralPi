@@ -21,33 +21,38 @@ int main(int argc, char *args[])
 	a.load (inputFilePath);
 
 	//Load NAM file
-	std::filesystem::path path = args[2];
-    nam::dspData conf = nam::get_dsp_data(path);
-    auto model_nam = nam::get_dsp(conf);
-	model_nam->prewarm();
-	
-	//Process example audio with NAM model
-	const float *readPointer = &a.samples[0][0];
-	float *writePointer = &a.samples[0][0];
-	int numSamples = a.getNumSamplesPerChannel();
-	int blocksize = 512;
-	
-	std::cout<<numSamples<<" samples left"<<std::flush;
-	while(numSamples > 0)
+	for(int i = 2; i < argc; i++)
 	{
-		int currentNumSamples = std::min(numSamples, blocksize);
-		model_nam->process(readPointer, writePointer, currentNumSamples);
-		model_nam->finalize_(currentNumSamples);
+		std::filesystem::path path = args[i];
+		nam::dspData conf = nam::get_dsp_data(path);
+		auto model_nam = nam::get_dsp(conf);
+		model_nam->prewarm();
+		
+		//Process example audio with NAM model
+		const float *readPointer = &a.samples[0][0];
+		float *writePointer = &a.samples[0][0];
+		int numSamples = a.getNumSamplesPerChannel();
+		int blocksize = 512;
+		
+		std::cout<<numSamples<<" samples left"<<std::flush;
+		while(numSamples > 0)
+		{
+			int currentNumSamples = std::min(numSamples, blocksize);
+			model_nam->process(readPointer, writePointer, currentNumSamples);
+			model_nam->finalize_(currentNumSamples);
 
-		readPointer += currentNumSamples;
-		writePointer += currentNumSamples;
-		numSamples -= currentNumSamples;
+			readPointer += currentNumSamples;
+			writePointer += currentNumSamples;
+			numSamples -= currentNumSamples;
 
-		std::cout<<"\r"<<numSamples<<" samples left"<<std::flush;
+			std::cout<<"\r"<<numSamples<<" samples left"<<std::flush;
+		}
+
+		std::cout<<"NAM finished, saving wav"<<std::endl;
+		
+		std::string outputFilePath;
+		if(argc == 3)outputFilePath = "out.wav";
+		else outputFilePath = std::string("out") + std::to_string(i - 1) + ".wav";
+		a.save (outputFilePath, AudioFileFormat::Wave);
 	}
-
-	std::cout<<"NAM finished, saving wav"<<std::endl;
-	
-	std::string outputFilePath = "output.wav";
-	a.save (outputFilePath, AudioFileFormat::Wave);
 }
