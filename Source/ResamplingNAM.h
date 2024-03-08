@@ -1,6 +1,5 @@
 #pragma once
 
-#define NAM_SAMPLE_FLOAT
 #include <NAM/dsp.h>
 
 #include "ResamplingContainer.h"

@@ -14,4 +14,4 @@ include_directories(${PROJECT_NAME} Dependencies/NeuralAmpModelerCore)
 
 add_executable (${PROJECT_NAME} ${SOURCES} ${NAM_SOURCES})
 target_compile_features (${PROJECT_NAME} INTERFACE cxx_std_17)
-target_compile_options(${PROJECT_NAME} PUBLIC -g)
+target_compile_options(${PROJECT_NAME} PUBLIC -g -O3)

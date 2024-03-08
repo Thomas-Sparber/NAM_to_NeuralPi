@@ -16,7 +16,7 @@ int main(int argc, char *args[])
 	//Load example audio
 	const std::string inputFilePath(args[1]);
     
-	AudioFile<float> a;
+	AudioFile<double> a;
 	a.load (inputFilePath);
 
 	//Load NAM file
@@ -30,11 +30,11 @@ int main(int argc, char *args[])
 			std::filesystem::path path = args[i];
 			std::unique_ptr<nam::DSP> model = nam::get_dsp(path);
 			std::unique_ptr<ResamplingNAM> model_nam = std::make_unique<ResamplingNAM>(std::move(model), a.getSampleRate());
-			//model_nam->Reset(a.getSampleRate(), blocksize);
+			model_nam->Reset(a.getSampleRate(), blocksize);
 			
 			//Process example audio with NAM model
-			float *readPointer = &a.samples[0][0];
-			float *writePointer = &a.samples[0][0];
+			double *readPointer = &a.samples[0][0];
+			double *writePointer = &a.samples[0][0];
 			int numSamples = a.getNumSamplesPerChannel();
 			
 			std::cout<<numSamples<<" samples left"<<std::flush;
@@ -42,6 +42,7 @@ int main(int argc, char *args[])
 			{
 				int currentNumSamples = std::min(numSamples, blocksize);
 				model_nam->process(readPointer, writePointer, currentNumSamples);
+				model_nam->finalize_(currentNumSamples);
 
 				readPointer += currentNumSamples;
 				writePointer += currentNumSamples;

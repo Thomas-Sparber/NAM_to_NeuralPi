@@ -86,7 +86,6 @@ class ResamplingContainer
 {
 public:
   using BlockProcessFunc = std::function<void(T**, T**, int)>;
-  using LanczosResampler = LanczosResampler<T, NCHANS, A>;
 
   // :param renderingSampleRate: The sample rate required by the code to be encapsulated.
   ResamplingContainer(double renderingSampleRate)
@@ -130,8 +129,8 @@ public:
     }
 
     {
-      mResampler1 = std::make_unique<LanczosResampler>(mInputSampleRate, mRenderingSampleRate);
-      mResampler2 = std::make_unique<LanczosResampler>(mRenderingSampleRate, mInputSampleRate);
+      mResampler1 = std::make_unique<LanczosResampler<T, NCHANS, A>>(mInputSampleRate, mRenderingSampleRate);
+      mResampler2 = std::make_unique<LanczosResampler<T, NCHANS, A>>(mRenderingSampleRate, mInputSampleRate);
 
       // Zeroes the scratch pointers so that we warm up with silence.
       ClearBuffers();
@@ -320,7 +319,7 @@ private:
   // The sample rate required by the DSP that this object encapsulates
   const double mRenderingSampleRate;
   // Pair of resamplers for (1) external -> encapsulated, (2) encapsulated -> external
-  std::unique_ptr<LanczosResampler> mResampler1, mResampler2;
+  std::unique_ptr<LanczosResampler<T, NCHANS, A>> mResampler1, mResampler2;
 };
 
 }; // namespace dsp
