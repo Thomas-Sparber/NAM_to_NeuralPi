@@ -1,6 +1,6 @@
-[submodule "Dependencies/NeuralAmpModelerCore"]
-	path = Dependencies/NeuralAmpModelerCore
-	url = https://github.com/Thomas-Sparber/NeuralAmpModelerCore.git
 [submodule "Dependencies/AudioFile"]
 	path = Dependencies/AudioFile
 	url = https://github.com/adamstark/AudioFile.git
+[submodule "Dependencies/NeuralAmpModelerCore"]
+	path = Dependencies/NeuralAmpModelerCore
+	url = https://github.com/sdatkinson/NeuralAmpModelerCore
